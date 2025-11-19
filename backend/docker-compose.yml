@@ -1,0 +1,126 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: unanu-postgres
+    environment:
+      POSTGRES_DB: unanu_contacts
+      POSTGRES_USER: unanu_user
+      POSTGRES_PASSWORD: unanu_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - unanu-network
+    restart: unless-stopped
+
+  # Redis for Rate Limiting
+  redis:
+    image: redis:7-alpine
+    container_name: unanu-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - unanu-network
+    restart: unless-stopped
+
+  # Backend API
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: unanu-backend
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgres://unanu_user:unanu_password@postgres:5432/unanu_contacts
+      RATE_LIMIT_REDIS_URL: redis://redis:6379
+      ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+      JWT_SECRET: development_jwt_secret_key_not_for_production
+      CORS_ORIGIN: http://localhost:8080
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./logs:/app/logs
+      - ./public:/app/public
+    networks:
+      - unanu-network
+    restart: unless-stopped
+
+  # Mailhog for Email Testing (Development)
+  mailhog:
+    image: mailhog/mailhog
+    container_name: unanu-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - unanu-network
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: unanu-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ../Unanu-WEbpage:/var/www/html
+    depends_on:
+      - backend
+    networks:
+      - unanu-network
+    restart: unless-stopped
+
+  # Redis Commander (Redis Management)
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: unanu-redis-commander
+    environment:
+      REDIS_HOSTS: local:redis:6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - redis
+    networks:
+      - unanu-network
+    restart: unless-stopped
+
+  # pgAdmin (PostgreSQL Management)
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: unanu-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@unanu.local
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - unanu-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  pgadmin_data:
+
+networks:
+  unanu-network:
+    driver: bridge
