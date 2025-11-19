@@ -542,6 +542,132 @@ textarea {
 	color: var(--text-muted);
 }
 
+/* Enhanced Form Styles */
+.form-status {
+	padding: 12px 16px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	margin-top: 16px;
+}
+
+.form-status.success {
+	background: rgba(16, 185, 129, 0.1);
+	border: 1px solid rgba(16, 185, 129, 0.3);
+	color: var(--success);
+}
+
+.form-status.error {
+	background: rgba(239, 68, 68, 0.1);
+	border: 1px solid rgba(239, 68, 68, 0.3);
+	color: #dc2626;
+}
+
+.form-status.warning {
+	background: rgba(245, 158, 11, 0.1);
+	border: 1px solid rgba(245, 158, 11, 0.3);
+	color: var(--warning);
+}
+
+.field-error {
+	color: #dc2626;
+	font-size: 12px;
+	margin-top: 4px;
+	display: none;
+}
+
+.field-error.show {
+	display: block;
+}
+
+.form-actions {
+	margin-top: 24px;
+}
+
+.checkbox-label {
+	display: flex !important;
+	align-items: flex-start;
+	gap: 12px;
+	margin-top: 16px;
+	cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+	margin: 4px 0 0 0;
+	width: auto;
+	flex-shrink: 0;
+}
+
+.checkbox-label span {
+	font-size: 14px;
+	line-height: 1.5;
+	color: var(--text-light);
+}
+
+.checkbox-label span a {
+	color: var(--maersk-blue);
+	text-decoration: none;
+	font-weight: 500;
+}
+
+.checkbox-label span a:hover {
+	text-decoration: underline;
+}
+
+/* Loading states */
+.btn.loading {
+	opacity: 0.7;
+	cursor: not-allowed;
+}
+
+.btn.loading .btn-text {
+	display: none;
+}
+
+.btn.loading .btn-loading {
+	display: inline;
+}
+
+.btn-loading::after {
+	content: '...';
+	animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+	0%, 20% { content: '.'; }
+	40% { content: '..'; }
+	60%, 100% { content: '...'; }
+}
+
+/* Invalid field styles */
+input:invalid,
+textarea:invalid {
+	border-color: #dc2626;
+}
+
+input:valid,
+textarea:valid {
+	border-color: var(--border);
+}
+
+input:focus:invalid,
+textarea:focus:invalid {
+	border-color: #dc2626;
+	box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+/* Honeypot field - completely hidden */
+.honeypot-field {
+	display: none !important;
+	visibility: hidden !important;
+	position: absolute !important;
+	left: -9999px !important;
+	top: -9999px !important;
+	width: 1px !important;
+	height: 1px !important;
+	overflow: hidden !important;
+}
+
 /* Footer */
 .site-footer {
 	background: var(--bg-dark);
