@@ -1,0 +1,32 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<linearGradient id="indGradient" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="#0b1120"/>
+			<stop offset="1" stop-color="#0f172a"/>
+		</linearGradient>
+		<radialGradient id="indGlowA" cx="20%" cy="70%" r="45%">
+			<stop offset="0" stop-color="#f472b6" stop-opacity="0.35"/>
+			<stop offset="1" stop-color="#0f172a" stop-opacity="0"/>
+		</radialGradient>
+		<radialGradient id="indGlowB" cx="78%" cy="28%" r="38%">
+			<stop offset="0" stop-color="#38bdf8" stop-opacity="0.32"/>
+			<stop offset="1" stop-color="#0f172a" stop-opacity="0"/>
+		</radialGradient>
+		<linearGradient id="indWave" x1="0" y1="1" x2="1" y2="0">
+			<stop offset="0" stop-color="#1e293b" stop-opacity="0.05"/>
+			<stop offset="0.5" stop-color="#64748b" stop-opacity="0.3"/>
+			<stop offset="1" stop-color="#312e81" stop-opacity="0.05"/>
+		</linearGradient>
+	</defs>
+	<rect width="1600" height="900" fill="url(#indGradient)"/>
+	<ellipse cx="340" cy="640" rx="360" ry="260" fill="url(#indGlowA)"/>
+	<ellipse cx="1280" cy="280" rx="300" ry="220" fill="url(#indGlowB)"/>
+	<path d="M-60 760 C 280 660 480 760 760 720 C 980 690 1160 590 1420 620 C 1540 634 1620 672 1660 700 V900 H -60 Z" fill="url(#indWave)" opacity="0.5"/>
+	<g opacity="0.2" stroke="#cbd5f5" stroke-width="1.5">
+		<path d="M140 520 Q 240 460 340 520 T 540 520" fill="none"/>
+		<path d="M960 360 Q 1080 320 1180 360 T 1380 360" fill="none"/>
+		<path d="M720 640 Q 840 700 960 640 T 1200 640" fill="none"/>
+	</g>
+</svg>
+
+

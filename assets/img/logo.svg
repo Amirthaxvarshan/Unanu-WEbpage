@@ -1,0 +1,28 @@
+<svg width="512" height="174" viewBox="0 0 512 174" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<linearGradient id="gradText" x1="0" y1="0" x2="0" y2="1">
+			<stop offset="0%" stop-color="#4b5563"/>
+			<stop offset="100%" stop-color="#111827"/>
+		</linearGradient>
+		<linearGradient id="gradShapeA" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0" stop-color="#ff735c"/>
+			<stop offset="1" stop-color="#c1123b"/>
+		</linearGradient>
+		<radialGradient id="gradShapeB" cx="50%" cy="50%" r="0.75">
+			<stop offset="0" stop-color="#ffb28c" />
+			<stop offset="1" stop-color="#d12245" />
+		</radialGradient>
+	</defs>
+	<rect width="512" height="174" fill="none"/>
+	<g font-family="'Poppins', 'Segoe UI', Arial, sans-serif" font-weight="700" fill="url(#gradText)">
+		<text x="0" y="116" font-size="108">UNANU</text>
+	</g>
+	<text x="6" y="146" font-family="'Poppins', 'Segoe UI', Arial, sans-serif" font-weight="500" font-size="22" letter-spacing="0.32em" fill="#5b677a">WE CARRY YOUR TRUST</text>
+	<g transform="translate(340 18)">
+		<path d="M77 20c14 8 22 22 18 34-5 15-26 24-46 30-17 5-37 8-50-2-13-10-11-32 2-46 10-11 28-16 45-18 11-1 23 0 31 2z" fill="url(#gradShapeA)" opacity="0.95"/>
+		<path d="M90 95c18 6 33 21 30 34-3 13-23 23-43 25-20 2-41-5-51-18-10-12-7-27 9-36 15-9 37-11 55-5z" fill="url(#gradShapeB)" opacity="0.9"/>
+		<path d="M130 55c10 8 14 21 9 31-6 12-24 18-40 16-17-2-30-12-30-24 0-13 15-23 33-26 10-2 21 0 28 3z" fill="#f97362"/>
+	</g>
+</svg>
+
+
