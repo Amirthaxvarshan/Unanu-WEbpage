@@ -44,22 +44,212 @@ document.querySelectorAll('a[href^="#"]').forEach((a) => {
 	});
 });
 
-// Contact form mock submit
-const form = document.getElementById('contactForm');
-const statusEl = document.getElementById('formStatus');
+// Enhanced Contact Form API Integration
+const contactForm = document.getElementById('contactForm');
+const formStatus = document.getElementById('formStatus');
+const submitBtn = document.getElementById('submitBtn');
 
-if (form && statusEl) {
-	form.addEventListener('submit', async (e) => {
+// API configuration
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+	? 'http://localhost:3000/api/contact'
+	: '/api/contact';
+
+// Client-side validation
+const validateField = (field) => {
+	const value = field.value.trim();
+	const errorElement = field.parentElement.querySelector(`[data-error="${field.name}"]`);
+	let error = '';
+
+	switch (field.name) {
+		case 'name':
+			if (!value) {
+				error = 'Name is required';
+			} else if (value.length < 2) {
+				error = 'Name must be at least 2 characters';
+			} else if (value.length > 100) {
+				error = 'Name must be less than 100 characters';
+			} else if (!/^[a-zA-Z\s\-'\.]+$/.test(value)) {
+				error = 'Name can only contain letters, spaces, hyphens, apostrophes, and periods';
+			}
+			break;
+
+		case 'email':
+			if (!value) {
+				error = 'Email is required';
+			} else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+				error = 'Please enter a valid email address';
+			}
+			break;
+
+		case 'company':
+			if (value && value.length > 200) {
+				error = 'Company name must be less than 200 characters';
+			}
+			break;
+
+		case 'phone':
+			if (value && !/^\+?[1-9]\d{9,14}$/.test(value.replace(/[\s\-\(\)]/g, ''))) {
+				error = 'Please enter a valid phone number (include country code)';
+			}
+			break;
+
+		case 'message':
+			if (!value) {
+				error = 'Message is required';
+			} else if (value.length < 10) {
+				error = 'Message must be at least 10 characters';
+			} else if (value.length > 2000) {
+				error = 'Message must be less than 2000 characters';
+			}
+			break;
+
+		case 'consent':
+			if (!field.checked) {
+				error = 'You must consent to data processing to submit this form';
+			}
+			break;
+	}
+
+	if (errorElement) {
+		if (error) {
+			errorElement.textContent = error;
+			errorElement.classList.add('show');
+			field.classList.add('invalid');
+		} else {
+			errorElement.textContent = '';
+			errorElement.classList.remove('show');
+			field.classList.remove('invalid');
+		}
+	}
+
+	return !error;
+};
+
+// Show form status message
+const showStatus = (message, type = 'success') => {
+	if (!formStatus) return;
+
+	formStatus.className = `form-status ${type}`;
+	formStatus.textContent = message;
+	formStatus.style.display = 'block';
+
+	// Auto-hide success messages after 5 seconds
+	if (type === 'success') {
+		setTimeout(() => {
+			formStatus.style.display = 'none';
+		}, 5000);
+	}
+};
+
+// Set loading state
+const setLoading = (loading) => {
+	if (!submitBtn) return;
+
+	if (loading) {
+		submitBtn.classList.add('loading');
+		submitBtn.disabled = true;
+	} else {
+		submitBtn.classList.remove('loading');
+		submitBtn.disabled = false;
+	}
+};
+
+// Handle form submission
+if (contactForm) {
+	// Add real-time validation
+	const fields = contactForm.querySelectorAll('input, textarea');
+	fields.forEach(field => {
+		field.addEventListener('blur', () => validateField(field));
+		field.addEventListener('input', () => {
+			if (field.classList.contains('invalid')) {
+				validateField(field);
+			}
+		});
+	});
+
+	contactForm.addEventListener('submit', async (e) => {
 		e.preventDefault();
-		statusEl.textContent = 'Submitting...';
+
+		// Validate all fields
+		let isValid = true;
+		fields.forEach(field => {
+			if (!validateField(field)) {
+				isValid = false;
+			}
+		});
+
+		if (!isValid) {
+			showStatus('Please correct the errors below and try again.', 'error');
+			return;
+		}
+
+		// Prepare form data
+		const formData = new FormData(contactForm);
+		const data = {
+			name: formData.get('name')?.trim(),
+			email: formData.get('email')?.trim(),
+			company: formData.get('company')?.trim() || null,
+			phone: formData.get('phone')?.trim() || null,
+			message: formData.get('message')?.trim(),
+			consent: formData.get('consent') === 'on',
+			honeypot: formData.get('honeypot')?.trim() || ''
+		};
+
 		try {
-			// Simulate async request (replace with your endpoint)
-			await new Promise((r) => setTimeout(r, 800));
-			form.reset();
-			statusEl.textContent = 'Thanks! We will contact you shortly.';
-			setTimeout(() => (statusEl.textContent = ''), 3000);
-		} catch (err) {
-			statusEl.textContent = 'Something went wrong. Please try again.';
+			setLoading(true);
+			showStatus('Submitting your message...', '');
+
+			const response = await fetch(`${API_BASE_URL}`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(data)
+			});
+
+			const result = await response.json();
+
+			if (result.success) {
+				// Success
+				showStatus('Thank you! Your message has been received successfully. We will contact you shortly.', 'success');
+				contactForm.reset();
+
+				// Clear any validation errors
+				fields.forEach(field => {
+					const errorElement = field.parentElement.querySelector(`[data-error="${field.name}"]`);
+					if (errorElement) {
+						errorElement.textContent = '';
+						errorElement.classList.remove('show');
+					}
+					field.classList.remove('invalid');
+				});
+
+			} else {
+				// Error from server
+				if (result.errors) {
+					// Show field-specific errors
+					Object.keys(result.errors).forEach(fieldName => {
+						const field = contactForm.querySelector(`[name="${fieldName}"]`);
+						if (field) {
+							const errorElement = field.parentElement.querySelector(`[data-error="${fieldName}"]`);
+							if (errorElement) {
+								errorElement.textContent = result.errors[fieldName][0];
+								errorElement.classList.add('show');
+								field.classList.add('invalid');
+							}
+						}
+					});
+					showStatus('Please correct the errors below and try again.', 'error');
+				} else {
+					showStatus(result.message || 'Submission failed. Please try again.', 'error');
+				}
+			}
+
+		} catch (error) {
+			console.error('Form submission error:', error);
+			showStatus('Network error. Please check your connection and try again.', 'error');
+		} finally {
+			setLoading(false);
 		}
 	});
 }
