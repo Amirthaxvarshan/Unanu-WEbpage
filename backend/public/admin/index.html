@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNANU Admin Dashboard</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚢</text></svg>">
+</head>
+<body>
+    <div id="app">
+        <!-- Loading State -->
+        <div id="loading" class="loading-screen">
+            <div class="loading-spinner"></div>
+            <p>Loading dashboard...</p>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="loginScreen" class="login-screen" style="display: none;">
+            <div class="login-container">
+                <div class="login-header">
+                    <img src="../assets/img/LOGO.png" alt="UNANU" class="login-logo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚢</text></svg>'">
+                    <h1>Admin Dashboard</h1>
+                    <p>UNANU Contact Management System</p>
+                </div>
+
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required autocomplete="email">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required autocomplete="current-password">
+                    </div>
+
+                    <button type="submit" class="btn primary" id="loginBtn">
+                        <span class="btn-text">Sign In</span>
+                        <span class="btn-loading" style="display: none;">Signing in...</span>
+                    </button>
+
+                    <div id="loginError" class="form-error" style="display: none;"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div id="dashboard" class="dashboard" style="display: none;">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="header-content">
+                    <div class="header-left">
+                        <img src="../assets/img/LOGO.png" alt="UNANU" class="header-logo" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚢</text></svg>'">
+                        <h1>Contact Management</h1>
+                    </div>
+
+                    <div class="header-right">
+                        <div class="user-menu">
+                            <span class="user-name" id="userName">Admin User</span>
+                            <button class="btn btn-secondary" id="logoutBtn">Sign Out</button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <nav class="sidebar-nav">
+                        <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                            <span class="nav-icon">📊</span>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                        <a href="#submissions" class="nav-item" data-page="submissions">
+                            <span class="nav-icon">📝</span>
+                            <span class="nav-text">Submissions</span>
+                            <span class="nav-badge" id="newCount">0</span>
+                        </a>
+                        <a href="#analytics" class="nav-item" data-page="analytics">
+                            <span class="nav-icon">📈</span>
+                            <span class="nav-text">Analytics</span>
+                        </a>
+                        <a href="#settings" class="nav-item" data-page="settings">
+                            <span class="nav-icon">⚙️</span>
+                            <span class="nav-text">Settings</span>
+                        </a>
+                    </nav>
+                </aside>
+
+                <!-- Main Content Area -->
+                <main class="main-content">
+                    <!-- Dashboard Page -->
+                    <div id="dashboardPage" class="page active">
+                        <!-- Stats Cards -->
+                        <div class="stats-grid">
+                            <div class="stat-card total">
+                                <div class="stat-header">
+                                    <h3>Total Submissions</h3>
+                                    <span class="stat-icon">📊</span>
+                                </div>
+                                <div class="stat-value" id="totalSubmissions">-</div>
+                                <div class="stat-change" id="totalChange">Loading...</div>
+                            </div>
+
+                            <div class="stat-card new">
+                                <div class="stat-header">
+                                    <h3>New Today</h3>
+                                    <span class="stat-icon">🆕</span>
+                                </div>
+                                <div class="stat-value" id="newToday">-</div>
+                                <div class="stat-change" id="newChange">Loading...</div>
+                            </div>
+
+                            <div class="stat-card progress">
+                                <div class="stat-header">
+                                    <h3>In Progress</h3>
+                                    <span class="stat-icon">⏳</span>
+                                </div>
+                                <div class="stat-value" id="inProgress">-</div>
+                                <div class="stat-change" id="progressChange">Loading...</div>
+                            </div>
+
+                            <div class="stat-card resolved">
+                                <div class="stat-header">
+                                    <h3>Resolved</h3>
+                                    <span class="stat-icon">✅</span>
+                                </div>
+                                <div class="stat-value" id="resolved">-</div>
+                                <div class="stat-change" id="resolvedChange">Loading...</div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="dashboard-section">
+                            <h2>Recent Submissions</h2>
+                            <div class="submission-cards" id="recentSubmissions">
+                                <div class="loading-placeholder">Loading recent submissions...</div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="dashboard-section">
+                            <h2>Quick Actions</h2>
+                            <div class="action-buttons">
+                                <button class="btn primary" id="exportBtn">
+                                    <span>📥</span> Export All Submissions
+                                </button>
+                                <button class="btn secondary" id="refreshBtn">
+                                    <span>🔄</span> Refresh Dashboard
+                                </button>
+                                <button class="btn secondary" id="testEmailBtn">
+                                    <span>📧</span> Test Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submissions Page -->
+                    <div id="submissionsPage" class="page">
+                        <!-- Filters and Search -->
+                        <div class="filters-section">
+                            <div class="filters-left">
+                                <div class="search-box">
+                                    <input type="text" id="searchInput" placeholder="Search by name or email...">
+                                    <button class="search-btn">🔍</button>
+                                </div>
+
+                                <div class="filter-group">
+                                    <select id="statusFilter">
+                                        <option value="">All Status</option>
+                                        <option value="new">New</option>
+                                        <option value="in_progress">In Progress</option>
+                                        <option value="resolved">Resolved</option>
+                                        <option value="spam">Spam</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-group">
+                                    <input type="date" id="dateFromFilter" placeholder="From">
+                                </div>
+
+                                <div class="filter-group">
+                                    <input type="date" id="dateToFilter" placeholder="To">
+                                </div>
+                            </div>
+
+                            <div class="filters-right">
+                                <button class="btn secondary" id="clearFiltersBtn">Clear Filters</button>
+                                <button class="btn primary" id="applyFiltersBtn">Apply Filters</button>
+                            </div>
+                        </div>
+
+                        <!-- Submissions Grid -->
+                        <div class="submissions-grid" id="submissionsGrid">
+                            <div class="loading-placeholder">Loading submissions...</div>
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="pagination" id="pagination">
+                            <div class="pagination-info">
+                                <span id="paginationInfo">Showing 0 of 0 submissions</span>
+                            </div>
+                            <div class="pagination-controls">
+                                <button class="btn secondary" id="prevPageBtn" disabled>Previous</button>
+                                <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                                <button class="btn secondary" id="nextPageBtn" disabled>Next</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Page -->
+                    <div id="analyticsPage" class="page">
+                        <div class="analytics-grid">
+                            <div class="analytics-card">
+                                <h3>Submission Trends</h3>
+                                <div class="chart-container">
+                                    <canvas id="trendsChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="analytics-card">
+                                <h3>Status Distribution</h3>
+                                <div class="chart-container">
+                                    <canvas id="statusChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="analytics-card">
+                                <h3>Response Rate</h3>
+                                <div class="chart-container">
+                                    <canvas id="responseChart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="analytics-card">
+                                <h3>Spam Detection</h3>
+                                <div class="chart-container">
+                                    <canvas id="spamChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Settings Page -->
+                    <div id="settingsPage" class="page">
+                        <div class="settings-section">
+                            <h2>System Status</h2>
+                            <div class="status-grid">
+                                <div class="status-item">
+                                    <span class="status-label">Database</span>
+                                    <span class="status-indicator" id="dbStatus">Checking...</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">Email Service</span>
+                                    <span class="status-indicator" id="emailStatus">Checking...</span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">Rate Limiting</span>
+                                    <span class="status-indicator" id="rateLimitStatus">Checking...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h2>Account Settings</h2>
+                            <div class="account-settings">
+                                <div class="user-info">
+                                    <p><strong>Email:</strong> <span id="userEmail">-</span></p>
+                                    <p><strong>Role:</strong> <span id="userRole">-</span></p>
+                                    <p><strong>Last Login:</strong> <span id="userLastLogin">-</span></p>
+                                </div>
+                                <button class="btn secondary" id="changePasswordBtn">Change Password</button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Submission Detail Modal -->
+        <div id="submissionModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Submission Details</h2>
+                    <button class="modal-close" id="closeModalBtn">&times;</button>
+                </div>
+
+                <div class="modal-body" id="modalBody">
+                    <div class="loading-placeholder">Loading submission details...</div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="modal-actions">
+                        <select id="statusSelect" class="status-select">
+                            <option value="new">New</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="resolved">Resolved</option>
+                            <option value="spam">Spam</option>
+                        </select>
+                        <button class="btn primary" id="updateStatusBtn">Update Status</button>
+                        <button class="btn secondary" id="markSpamBtn">Mark as Spam</button>
+                        <button class="btn danger" id="deleteBtn">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Alert Toast -->
+        <div id="alertToast" class="toast" style="display: none;">
+            <span class="toast-message" id="toastMessage"></span>
+            <button class="toast-close" id="toastClose">&times;</button>
+        </div>
+    </div>
+
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
