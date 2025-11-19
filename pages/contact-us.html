@@ -57,25 +57,54 @@
 					</div>
 					<div class="panel">
 						<h3>Get in touch</h3>
-						<form id="contactForm">
+						<form id="contactForm" novalidate>
 							<label>
-								<span>Name</span>
-								<input name="name" required placeholder="Full name" />
+								<span>Name *</span>
+								<input name="name" required placeholder="Full name" minlength="2" maxlength="100" />
+								<span class="field-error" data-error="name"></span>
 							</label>
 							<label>
-								<span>Email</span>
+								<span>Email *</span>
 								<input name="email" type="email" required placeholder="Work email" />
+								<span class="field-error" data-error="email"></span>
 							</label>
 							<label>
 								<span>Company</span>
-								<input name="company" placeholder="Company" />
+								<input name="company" placeholder="Company" maxlength="200" />
+								<span class="field-error" data-error="company"></span>
 							</label>
 							<label>
-								<span>Message</span>
-								<textarea name="message" rows="4" placeholder="How can we help?"></textarea>
+								<span>Phone</span>
+								<input name="phone" type="tel" placeholder="Phone number (include country code)" />
+								<span class="field-error" data-error="phone"></span>
 							</label>
-							<button class="btn primary" type="submit">Submit</button>
-							<p id="formStatus" class="muted" role="status" aria-live="polite"></p>
+							<label>
+								<span>Message *</span>
+								<textarea name="message" required placeholder="How can we help?" minlength="10" maxlength="2000" rows="4"></textarea>
+								<span class="field-error" data-error="message"></span>
+							</label>
+
+							<!-- Honeypot field (hidden from users) -->
+							<label class="honeypot-field" style="display: none;">
+								<span>Leave this field empty</span>
+								<input name="honeypot" type="text" tabindex="-1" autocomplete="off" />
+							</label>
+
+							<!-- GDPR Consent Checkbox -->
+							<label class="checkbox-label">
+								<input type="checkbox" name="consent" required />
+								<span>I consent to the processing of my personal data in accordance with the <a href="privacy-policy.html" target="_blank">Privacy Policy</a>. *</span>
+								<span class="field-error" data-error="consent"></span>
+							</label>
+
+							<div class="form-actions">
+								<button class="btn primary" type="submit" id="submitBtn">
+									<span class="btn-text">Submit</span>
+									<span class="btn-loading" style="display: none;">Submitting...</span>
+								</button>
+							</div>
+
+							<div id="formStatus" class="form-status" role="status" aria-live="polite"></div>
 						</form>
 					</div>
 				</div>
