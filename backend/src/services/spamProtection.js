@@ -1,6 +1,7 @@
 const winston = require('winston');
 const { isRedisAvailable, getRedisClient } = require('../config/redis');
 const { pool } = require('../config/database');
+const { encryptData } = require('./encryption');
 
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
